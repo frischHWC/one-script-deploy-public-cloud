@@ -1,0 +1,376 @@
+# One Script Deploy Public Cloud
+
+This repository provides an easy way with a Single Line of Command, a setup and configuration of a CDP deployment on Public Cloud. 
+
+It provides also start-stop and deletion of your environments in the public cloud.
+
+
+## Prerequisites
+
+To use the module provided here, you will need the following prerequisites:
+
+* An AWS or Azure Cloud account;
+  * For **AWS** access keys are required to be able to create the Cloud resources via the Terraform aws provider. See the [AWS documentation for Managing access keys for IAM users](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+  * For **Azure**, authentication with the Azure subscription is required. There are a number of ways to do this outlined in the [Azure Terraform Provider Documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure).
+
+* A CDP Public Cloud account (you can sign up for a  [60-day free pilot](https://www.cloudera.com/campaign/try-cdp-public-cloud.html) );
+  * If you have not yet configured your `~/.cdp/credentials file`, follow the steps for [Generating an API access key](https://docs.cloudera.com/cdp-public-cloud/cloud/cli/topics/mc-cli-generating-an-api-access-key.html).
+
+* A recent version of Terraform software (version 0.13 or higher). To install it, see: https://developer.hashicorp.com/terraform/downloads
+
+* Clone the cdp-tf-quickstarts along this repository: ``git clone https://github.com/frischHWC/cdp-tf-quickstarts.git``
+  * Check notes about Authentication for [AWS Auth](https://github.com/frischHWC/cdp-tf-quickstarts#notes-on-aws-authentication) & [Azure auth](https://github.com/frischHWC/cdp-tf-quickstarts#notes-on-azure-authentication)
+  * __ N.B: Be sure to use exactly this repository as it has been slightly modified to inject variables__
+
+
+## Basic Architecture
+
+This script shell is using cdo-tf-quickstarts to provide prerequisites on a cloud provider for a cdp deployment and setup a datalake.
+It then uses cdp cli with basic commands to create/start/stop/delete experiences on top of the datalake. 
+
+
+## Usage
+
+### Help
+
+To know all parameters, do:
+
+    ./cdp-pbc-manager.sh -h
+
+
+### Important Parameters (Non-Authentication)
+
+There are few important parameters:
+
+1. Which cloud provider?
+
+    --cloud-provider : Either aws or azure 
+
+1. What to do ?
+
+    --action : Either: create , start , stop , delete
+
+1. On which resources to operate ?
+
+    --scope : dl means only datalake, dh means only datahub. You can specify both with a comma: dl,dh . Empty value means only datalake.
+
+1. What name to give ?
+
+    --cluster-name: Whatever with no special characters (except '-' )
+
+1. To who should I give access (i.e. whitelist of IPs) ?
+
+    --whitelist-ips : a space separated list of IPs. ONLY these IPs will be able to connect to CDP machines.
+
+
+1. Finally, secrets and tokens are required to access your cloud provider resources, and these are detailed in sections below.
+
+
+### Basic Usage with AWS
+
+To make it work with AWS, you need a key id and its secret, and a key pair setup in AWS.
+(Both can be retrieved from prerequisites steps)
+
+Then, you can launch a creation of a datalake named 'my-first-pbc' like this:
+
+  ./cdp-pbc-manager.sh \
+      --cloud-provider="azure" \
+      --action="create" \
+      --cluster-name="my-first-pbc" \
+      \
+      --whitelist-ips="X.X.X.X" \
+      \
+      --aws-access-key-id="" \
+      --aws-access-key-secret="" \
+      --aws-key-pair="my-key-pair"
+
+__ Note: You can specify region with parameter: --aws-region= . By default it is eu-west-3__
+
+
+### Basic Usage with Azure
+
+To make it work with Azure, you need a client id, its secret, the tenant and subscription id. 
+(All can be retrieved from prerequisites steps)
+
+To access machines, your ssh local key is required (if needed create one).
+
+Then, you can launch a creation of a datalake named 'my-first-pbc' like this:
+
+  ./cdp-pbc-manager.sh \
+      --cloud-provider="azure" \
+      --action="create" \
+      --cluster-name="my-first-pbc" \
+      \
+      --whitelist-ips="X.X.X.X" \
+      \
+      --arm-client-id="" \
+      --arm-client-secret="" \
+      --arm-tenant-id="" \
+      --arm-subscription-id="" \
+      \
+      --ssh-user-key="ssh-rsa xxxxxxxxx frisch@local"
+
+__ Note: You can specify region with parameter: --az-region= . By default it is eastus__
+
+### Advice
+
+I advise you to create a ``launch.sh`` script like this: (by for sure setting up all variables)
+
+    export CLOUD_PROVIDER=$1
+    export ACTON=$2
+    export CLUSTER_NAME=$3
+    export SCOPE=$4
+
+    export WHITELIST_IPS=""
+
+    ## For Azure
+    export AZ_ARM_CLIENT_ID=""
+    export AZ_ARM_CLIENT_SECRET=""
+    export AZ_ARM_SUBSCRIPTION_ID=""
+    export AZ_ARM_TENANT_ID=""
+    export SSH_USER_KEY=""
+
+    ## For AWS
+    export AWS_AWS_ACCESS_KEY_ID=""
+    export AWS_AWS_SECRET_ACCESS_KEY=""
+    export AWS_KEY_PAIR=""
+
+    ./cdp-pbc-manager.sh \
+        --cloud-provider=$CLOUD_PROVIDER \
+        --action=$ACTON \
+        --scope=$SCOPE \
+        --cluster-name=$CLUSTER_NAME \
+        \
+        --whitelist-ips="$WHITELIST_IPS" \
+        \
+        --arm-client-id=$AZ_ARM_CLIENT_ID \
+        --arm-client-secret=$AZ_ARM_CLIENT_SECRET \
+        --arm-tenant-id=$AZ_ARM_TENANT_ID \
+        --arm-subscription-id=$AZ_ARM_SUBSCRIPTION_ID \
+        --ssh-user-key="$SSH_USER_KEY" \
+        \
+        --aws-access-key-id=$AWS_AWS_ACCESS_KEY_ID \
+        --aws-access-key-secret=$AWS_AWS_SECRET_ACCESS_KEY \
+        --aws-key-pair=$AWS_KEY_PAIR
+
+
+Then, you can easily create/start/stop/delete public cloud assets with one command:
+
+  ./launch.sh aws create my-test-cluster dl,dh
+
+
+## Support & Testing
+
+Current support and testing is limited to AWS & Azure on Datalake creation/start/stop/deletion 
+and creation/start/stop/deletion of a Datahub of type data-eng (which is a '7.2.17 - Data Engineering: Apache Spark, Apache Hive, Apache Oozie' in Cloudera)
+
+See this table to recap tested configuration:
+
+__Possible actions foreach line are marked with a &#10003; If none is present on the line, it is not yet implemented__
+
+[.stripes-even, cols="1,7,2,1,1,1,1,2"]
+|===
+|Cloud Provider |Type |Version |Create |Start |Stop |Delete |Region 
+
+| AWS
+| Datalake
+| 7.2.17
+| &#10003;
+| &#10003;
+| &#10003;
+| &#10003;
+| eu-west-3
+
+| Azure
+| Datalake
+| 7.2.17
+| &#10003;
+| &#10003;
+| &#10003;
+| &#10003;
+| eastus
+
+| AWS
+| Datahub - data-eng 
+| 7.2.17
+| &#10003;
+| &#10003;
+| &#10003;
+| &#10003;
+| eu-west-3
+
+| Azure
+| Datahub - data-eng 
+| 7.2.17
+| &#10003;
+| &#10003;
+| &#10003;
+| &#10003;
+| eastus
+
+| AWS
+| Datahub - data-mart 
+| 7.2.17
+| 
+| 
+| 
+| 
+| 
+
+| Azure
+| Datahub - data-mart 
+| 7.2.17
+| 
+| 
+| 
+| 
+| 
+
+| AWS
+| Datahub - streaming 
+| 7.2.17
+| 
+| 
+| 
+| 
+| 
+
+| Azure
+| Datahub - streaming
+| 7.2.17
+| 
+| 
+| 
+| 
+| 
+
+| AWS
+| Datahub - data-flow 
+| 7.2.17
+| 
+| 
+| 
+| 
+| 
+
+| Azure
+| Datahub - data-flow
+| 7.2.17
+| 
+| 
+| 
+| 
+| 
+
+| AWS
+| Datahub - data-discovery 
+| 7.2.17
+| 
+| 
+| 
+| 
+| 
+
+| Azure
+| Datahub - data-discovery
+| 7.2.17
+| 
+| 
+| 
+| 
+| 
+
+| AWS
+| Cloudera Data Engineering
+| 
+| 
+| 
+| 
+| 
+| 
+
+| Azure
+| Cloudera Data Engineering
+| 
+| 
+| 
+| 
+| 
+| 
+
+| AWS
+| Cloudera Machine Learning
+| 
+| 
+| 
+| 
+| 
+| 
+
+| Azure
+| Cloudera Machine Learning
+| 
+| 
+| 
+| 
+| 
+| 
+
+| AWS
+| Cloudera Data Warehouse
+| 
+| 
+| 
+| 
+| 
+| 
+
+| Azure
+| Cloudera Data Warehouse
+| 
+| 
+| 
+| 
+| 
+| 
+
+| AWS
+| Cloudera Operationnal Database
+| 
+| 
+| 
+| 
+| 
+| 
+
+| Azure
+| Cloudera Operationnal Database
+| 
+| 
+| 
+| 
+| 
+| 
+
+| AWS
+| Cloudera Data Flow
+| 
+| 
+| 
+| 
+| 
+| 
+
+| Azure
+| Cloudera Data Flow
+| 
+| 
+| 
+| 
+| 
+| 
+
+|===
+
+
+More testing and support will come later.
