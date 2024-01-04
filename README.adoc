@@ -10,17 +10,17 @@ It provides also start-stop and deletion of your environments in the public clou
 To use the module provided here, you will need the following prerequisites:
 
 * An AWS or Azure Cloud account;
-  * For **AWS** access keys are required to be able to create the Cloud resources via the Terraform aws provider. See the [AWS documentation for Managing access keys for IAM users](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
-  * For **Azure**, authentication with the Azure subscription is required. There are a number of ways to do this outlined in the [Azure Terraform Provider Documentation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure).
+    * For **AWS** access keys are required to be able to create the Cloud resources via the Terraform aws provider. See the link:https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html[AWS documentation for Managing access keys for IAM users].
+    * For **Azure**, authentication with the Azure subscription is required. There are a number of ways to do this outlined in the link:https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#authenticating-to-azure[Azure Terraform Provider Documentation].
 
-* A CDP Public Cloud account (you can sign up for a  [60-day free pilot](https://www.cloudera.com/campaign/try-cdp-public-cloud.html) );
-  * If you have not yet configured your `~/.cdp/credentials file`, follow the steps for [Generating an API access key](https://docs.cloudera.com/cdp-public-cloud/cloud/cli/topics/mc-cli-generating-an-api-access-key.html).
+* A CDP Public Cloud account (you can sign up for a  link:https://www.cloudera.com/campaign/try-cdp-public-cloud.html[60-day free pilot] );
+    * If you have not yet configured your `~/.cdp/credentials file`, follow the steps for link:https://docs.cloudera.com/cdp-public-cloud/cloud/cli/topics/mc-cli-generating-an-api-access-key.html[Generating an API access key].
 
-* A recent version of Terraform software (version 0.13 or higher). To install it, see: https://developer.hashicorp.com/terraform/downloads
+* A recent version of Terraform software (version 0.13 or higher). To install it, see: link:https://developer.hashicorp.com/terraform/downloads[Hashicorp docs]
 
 * Clone the cdp-tf-quickstarts along this repository: ``git clone https://github.com/frischHWC/cdp-tf-quickstarts.git``
-  * Check notes about Authentication for [AWS Auth](https://github.com/frischHWC/cdp-tf-quickstarts#notes-on-aws-authentication) & [Azure auth](https://github.com/frischHWC/cdp-tf-quickstarts#notes-on-azure-authentication)
-  * __ N.B: Be sure to use exactly this repository as it has been slightly modified to inject variables__
+    * Check notes about Authentication for link:https://github.com/frischHWC/cdp-tf-quickstarts#notes-on-aws-authentication[AWS Auth] & link:https://github.com/frischHWC/cdp-tf-quickstarts#notes-on-azure-authentication[Azure auth]
+    * __ N.B: Be sure to use exactly this repository as it has been slightly modified to inject variables__
 
 
 ## Basic Architecture
@@ -52,9 +52,9 @@ There are few important parameters:
 
 1. On which resources to operate ?
 
-    --scope : dl means only datalake, dh means only datahub. You can specify both with a comma: dl,dh . Empty value means only datalake.
+    --scope : dl means only datalake, dh means only datahub. You can specify both for example: dl,dh . __Empty value means only datalake__.
 
-1. What name to give ?
+1. Which name to give ?
 
     --cluster-name: Whatever with no special characters (except '-' )
 
