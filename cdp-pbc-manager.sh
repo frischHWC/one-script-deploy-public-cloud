@@ -318,7 +318,7 @@ then
     then
         echo "Deleting Datahub"
         delete_dh $ENV_NAME $DH_NAME
-        dh_status $ENV_NAME $DH_NAME "deleted"
+        dh_status $ENV_NAME $DH_NAME ''
     fi
 
     if [ "${SCOPE_DL}" = true ]
