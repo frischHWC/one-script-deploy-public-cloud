@@ -85,11 +85,12 @@ function dh_status() {
 
     dh_crn $ENV_NAME $DH_NAME
     DH_STATUS=""
-    do
-        sleep 60
+   while true ; do
         DH_STATUS=$(cdp datahub describe-cluster --cluster-name $DH_CRN | jq -r ".cluster.status")
         echo "$DH_NAME is in state: $DH_STATUS"
-    done while [ "$DH_STATUS" != "$EXPECTED_STATUS" ] ;
+        if [ "$DH_STATUS" == "$EXPECTED_STATUS" ] ; then break ; fi
+        sleep 60
+    done
 
 }
 
