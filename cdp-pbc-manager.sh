@@ -283,10 +283,12 @@ then
             --arm-client-secret=$AZ_ARM_CLIENT_SECRET \
             --arm-tenant-id=$AZ_ARM_TENANT_ID \
             --arm-subscription-id=$AZ_ARM_SUBSCRIPTION_ID \
+            --az-region=$AZ_REGION \
             --ssh-user-key="$SSH_USER_KEY" \
             --aws-access-key-id=$AWS_AWS_ACCESS_KEY_ID \
             --aws-access-key-secret=$AWS_AWS_SECRET_ACCESS_KEY \
-            --aws-key-pair=$AWS_KEY_PAIR 
+            --aws-key-pair=$AWS_KEY_PAIR \
+            --aws-region=$AWS_REGION
         cd ../one-script-deploy-public-cloud/
     fi
 
@@ -334,10 +336,12 @@ then
             --arm-client-secret=$AZ_ARM_CLIENT_SECRET \
             --arm-tenant-id=$AZ_ARM_TENANT_ID \
             --arm-subscription-id=$AZ_ARM_SUBSCRIPTION_ID \
+            --az-region=$AZ_REGION \
             --ssh-user-key=$SSH_USER_KEY \
             --aws-access-key-id=$AWS_AWS_ACCESS_KEY_ID \
             --aws-access-key-secret=$AWS_AWS_SECRET_ACCESS_KEY \
-            --aws-key-pair=$AWS_KEY_PAIR 
+            --aws-key-pair=$AWS_KEY_PAIR \
+            --aws-region=$AWS_REGION
         cd ../one-script-deploy-public-cloud/
     fi
 fi
